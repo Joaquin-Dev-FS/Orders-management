@@ -1,0 +1,161 @@
+Backend funcionando con postman en frontend para creación, actualización, borrado y testeo de órdenes
+
+Runtime y Dependencias:
+
+Node.js
+npm i -D @types/express@4
+npm install express body-parser uuid
+npm install tsx --save-dev
+npm install --save-dev typescript ts-node @types/node jest @types/jest supertest @types/supertest
+
+Instrucciones:
+instalar Node.js
+instalar dependencias:en /backend/ con npm install
+
+Iniciar el server en /src/ con npx tsx index.ts
+
+Hacer un POST con postman a http://<IP>:<Puerto>/orders
+y JSON en BODY, ej:
+{
+  "customer_name": "Marce",
+  "item": "Café",
+  "quantity": 1,
+  "status": "pending"
+} 
+esto devuelve en la respuesta: 
+{
+"id":"689571ef-da1a-4535-a2a3-e7b2c629496c",
+  "customer_name": "Marce",
+  "item": "Café",
+  "quantity": 1,
+  "status": "pending"
+}
+
+para obtener la órden hacer un GET a
+http://<IP>:<Puerto>/orders/{ID}
+
+ej:
+
+http://<IP>:<Puerto>/orders/689571ef-da1a-4535-a2a3-e7b2c629496c
+
+respuesta:
+
+{
+"id":"689571ef-da1a-4535-a2a3-e7b2c629496c",
+  "customer_name": "Marce",
+  "item": "Café",
+  "quantity": 1,
+  "status": "pending"
+}
+
+si se hace un GET especificando page y page size devuelve una cantidad de ordenes por pagina 
+ej:
+http://<IP>:<Puerto>/orders?page=1&page_size=5
+devuelve 5 órdenes por página:
+{
+    "page": 1,
+    "page_size": 5,
+    "total": 4,//como hay 4 órdenes<5 devuelve una página
+    "total_pages": 1,
+    "orders": [
+        {
+            "id": "9d9f57ca-18b3-402d-bb25-9cb981a65496",
+            "customer_name": "Ernesto",
+            "item": "Arvejas",
+            "quantity": 1,
+            "status": "cancelled",
+            "created_at": 1731291599025
+        },
+        {
+            "id": "70569a58-d6a2-4d5a-9035-93d73a58541b",
+            "customer_name": "Samuel",
+            "item": "Zapatillas",
+            "quantity": 1,
+            "status": "pending",
+            "created_at": 1731291611574
+        },
+        {
+            "id": "3e5cb57d-3d75-4716-9f62-8395a2558116",
+            "customer_name": "Sandra",
+            "item": "Inciensos",
+            "quantity": 2,
+            "status": "completed",
+            "created_at": 1731291629368
+        },
+        {
+            "id": "56752fbb-4d0c-41da-8ed4-bed22a19e6e5",
+            "customer_name": "manuel",
+            "item": "Cebolla",
+            "quantity": 1,
+            "status": "pending",
+            "created_at": 1731291716258
+        }
+        
+    ]
+}
+si se hace un GET especificando page, page size y status devuelve una cantidad de ordenes por pagina filtradas por status
+ej:
+http://<IP>:<Puerto>/orders?status=pending&page=1&page_size=5
+{
+    "page": 1,
+    "page_size": 5,
+    "total": 2,
+    "total_pages": 1,
+    "orders": [
+        {
+            "id": "70569a58-d6a2-4d5a-9035-93d73a58541b",
+            "customer_name": "Samuel",
+            "item": "Zapatillas",
+            "quantity": 1,
+            "status": "pending",
+            "created_at": 1731291611574
+        },
+        {
+            "id": "56752fbb-4d0c-41da-8ed4-bed22a19e6e5",
+            "customer_name": "Darío",
+            "item": "Plato",
+            "quantity": 1,
+            "status": "pending",
+            "created_at": 1731291716258
+        }
+              ]
+}
+
+Si se hace un PUT a http://<IP>:<Puerto>/orders/{ID}
+esto actualiza la órden
+
+ej:
+
+http://<IP>:<Puerto>/orders/70569a58-d6a2-4d5a-9035-93d73a58541b
+
+{
+            "id": "70569a58-d6a2-4d5a-9035-93d73a58541b",
+            "customer_name": "Samuel",
+            "item": "Zapatillas",
+            "quantity": 1,
+            "status": "cancelled",
+            "created_at": 1731291611574
+        }
+
+Si se hace http://<IP>:<Puerto>/orders/{ID} con método DELETE borra dicha órden:
+
+http://<IP>:<Puerto>/orders/56752fbb-4d0c-41da-8ed4-bed22a19e6e5
+
+esto borra la siguiendte órden:
+{
+            "id": "56752fbb-4d0c-41da-8ed4-bed22a19e6e5",
+            "customer_name": "Darío",
+            "item": "Plato",
+            "quantity": 1,
+            "status": "pending",
+            "created_at": 1731291716258
+        }
+
+Tests:
+
+testFunctions.ts contiene las funciones con parametros prestablecidos para testear si los resultados son correctos
+
+con npx:
+ npx jest testFunctions.ts
+
+esto inicia el componente testFunctions y prueba si los resultados son los que espera cada función
